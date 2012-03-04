@@ -26,11 +26,9 @@ app.get('/:file.:ext', function (req, res){
                 });
 });
 
-var queue = null;
-
-io.on('connection', function (socket) {
+io.sockets.on('connection', function (socket) {
     var p = player.create({
         'socket': socket,
     });
-    queue = p.findOpponent(queue);
+    console.log("Connected");
 });

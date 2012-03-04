@@ -88,6 +88,8 @@ var SPELL_ACTIONS = [
     "WWS",
 ];
 
+var queue = null;
+
 exports.create = function(spec,my) {
     var that, next;
     my = my || {};
@@ -97,19 +99,9 @@ exports.create = function(spec,my) {
     
     that = {};
     
-    that.findOpponent = function (queue) {
-        if (queue) {
-            that.setOpponent(queue);
-            queue.setOpponent(that);
-            return null;
-        } else {
-            return that
-        }
-    }
-    
     that.setOpponent = function (opponent) {
         my.opponent = opponent;
-        spec.socket.emit('connected');
+        spec.socket.emit('opponent connected');
     }
     
     that.ready = function () {
@@ -141,7 +133,7 @@ exports.create = function(spec,my) {
                 if (action.spells[i].hand !== "left" && action.spells[i].hand !== "right") {
                     return false;
                 }
-                if (!my.isCastable(SPELL_ACTIONS[id], my.actions[action.spells[i].hand], action[action.spells[i].hand])) {
+                if (!my.isCastable(SPELL_ACTIONS[spell], my.actions[action.spells[i].hand], action[action.spells[i].hand])) {
                     return false;
                 }
             }
@@ -164,6 +156,19 @@ exports.create = function(spec,my) {
         return true;
     }
     
+    spec.socket.on('find opponent', function () {
+        console.log("Find opponent:")
+        if (queue) {
+            console.log("Found")
+            that.setOpponent(queue);
+            queue.setOpponent(that);
+            queue = null;
+        } else {
+            console.log("Waiting...")
+            queue =  that
+        }
+    });
+    
     spec.socket.on('ready', function (action) {
         if (action && !my.isValid(action)) {
             spec.socket.emit('error', "Invalid action");
@@ -173,7 +178,7 @@ exports.create = function(spec,my) {
         next = action;
         
         if (that.ready() && my.opponent.ready()) {
-            next = opponent.newTurn(next);
+            next = my.opponent.newTurn(next);
             that.newTurn(next);
         }
     });
@@ -181,6 +186,8 @@ exports.create = function(spec,my) {
     spec.socket.on('unready', function () {
         next = null;
     });
+    
+    spec.socket.emit('connected');
 
     return that;
 }
