@@ -1,5 +1,3 @@
-var game = require('./game');
-
 var SPELL_LIST = [
     "Dispel magic",
     "Summon elemental",
@@ -101,12 +99,8 @@ exports.create = function(spec,my) {
     
     that.findOpponent = function (queue) {
         if (queue) {
-            var g = game.create({
-                'player1': queue,
-                'player2': that,
-            });
-            that.setOpponent(g);
-            queue.setOpponent(g);
+            that.setOpponent(queue);
+            queue.setOpponent(that);
             return null;
         } else {
             return that
