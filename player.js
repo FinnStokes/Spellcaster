@@ -1,92 +1,133 @@
-var SPELL_LIST = [
-    "Dispel magic",
-    "Summon elemental",
-    "Magic mirror",
-    "Lightning bolt",
-    "Cure heavy wounds",
-    "Cure light wounds",
-    "Amnesia",
-    "Confusion",
-    "Disease",
-    "Blindness",
-    "Delayed effect",
-    "Raise dead",
-    "Poison",
-    "Paralysis",
-    "Summon troll",
-    "Fireball",
-    "Shield",
-    "Surrender",
-    "Remove enchantment",
-    "Invisibility",
-    "Charm monster",
-    "Charm person",
-    "Summon ogre",
-    "Finger of death",
-    "Haste",
-    "Missile",
-    "Summon goblin",
-    "Anti-spell",
-    "Permanency",
-    "Time stop",
-    "Resist cold",
-    "Fear",
-    "Fire storm",
-    "Lightning bolt 2",
-    "Cause light wounds",
-    "Summon giant",
-    "Cause heavy wounds",
-    "Counter-spell",
-    "Ice storm",
-    "Resist heat",
-    "Protection from evil",
-    "Counter-spell 2",
-];
+var SPELLS = {
+    'Dispel magic': spell.create({
+        'actions': "CDPW",
+    }),
+    'Summon elemental': spell.create({
+        'actions': "CSWWS",
+    }),
+    'Magic mirror': spell.create({
+        'actions': "Cw",
+    }),
+    'Lightning bolt': spell.create({
+        'actions': "DFFDD",
+    }),
+    'Cure heavy wounds': spell.create({
+        'actions': "DFPW",
+    }),
+    'Cure light wounds': spell.create({
+        'actions': "DFW",
+    }),
+    'Amnesia': spell.create({
+        'actions': "DPP",
+    }),
+    'Confusion': spell.create({
+        'actions': "DSF",
+    }),
+    'Disease': spell.create({
+        'actions': "DSFFFC",
+    }),
+    'Blindness': spell.create({
+        'actions': "DWFFd",
+    }),
+    'Delayed effect': spell.create({
+        'actions': "DWSSSP",
+    }),
+    'Raise dead': spell.create({
+        'actions': "DWWFWC",
+    }),
+    'Poison': spell.create({
+        'actions': "DWWFWD",
+    }),
+    'Paralysis': spell.create({
+        'actions': "FFF",
+    }),
+    'Summon troll': spell.create({
+        'actions': "FPSFW",
+    }),
+    'Fireball': spell.create({
+        'actions': "FSSDD",
+    }),
+    'Shield': spell.create({
+        'actions': "P",
+    }),
+    'Surrender': spell.create({
+        'actions': "p",
+    }),
+    'Remove enchantment': spell.create({
+        'actions': "PDWP",
+    }),
+    'Invisibility': spell.create({
+        'actions': "PPws",
+    }),
+    'Charm monster': spell.create({
+        'actions': "PSDD",
+    }),
+    'Charm person': spell.create({
+        'actions': "PSDF",
+    }),
+    'Summon ogre': spell.create({
+        'actions': "PSFW",
+    }),
+    'Finger of death': spell.create({
+        'actions': "PWPFSSSD",
+    }),
+    'Haste': spell.create({
+        'actions': "PWPWWC",
+    }),
+    'Missile': spell.create({
+        'actions': "SD",
+    }),
+    'Summon goblin': spell.create({
+        'actions': "SFW",
+    }),
+    'Anti-spell': spell.create({
+        'actions': "SPF",
+    }),
+    'Permanency': spell.create({
+        'actions': "SPFPSDW",
+    }),
+    'Time stop': spell.create({
+        'actions': "SPPC",
+    }),
+    'Resist cold': spell.create({
+        'actions': "SSFP",
+    }),
+    'Fear': spell.create({
+        'actions': "SWD",
+    }),
+    'Fire storm': spell.create({
+        'actions': "SWWC",
+    }),
+    'Lightning bolt 2': spell.create({
+        'actions': "WDDC",
+    }),
+    'Cause light wounds': spell.create({
+        'actions': "WFP",
+    }),
+    'Summon giant': spell.create({
+        'actions': "WFPSFW",
+    }),
+    'Cause heavy wounds': spell.create({
+        'actions': "WPFD",
+    }),
+    'Counter-spell': spell.create({
+        'actions': "WPP",
+    }),
+    'Ice storm': spell.create({
+        'actions': "WSSC",
+    }),
+    'Resist heat': spell.create({
+        'actions': "WWFP",
+    }),
+    'Protection from evil': spell.create({
+        'actions': "WWP",
+    }),
+    'Counter-spell 2': spell.create({
+        'actions': "WWS",
+    }),
+};
 
-var SPELL_ACTIONS = [
-    "CDPW",
-    "CSWWS",
-    "Cw",
-    "DFFDD",
-    "DFPW",
-    "DFW",
-    "DPP",
-    "DSF",
-    "DSFFFC",
-    "DWFFd",
-    "DWSSSP",
-    "DWWFWC",
-    "DWWFWD",
-    "FFF",
-    "FPSFW",
-    "FSSDD",
-    "P",
-    "p",
-    "PDWP",
-    "PPws",
-    "PSDD",
-    "PSDF",
-    "PSFW",
-    "PWPFSSSD",
-    "PWPWWC",
-    "SD",
-    "SFW",
-    "SPF",
-    "SPFPSDW",
-    "SPPC",
-    "SSFP",
-    "SWD",
-    "SWWC",
-    "WDDC",
-    "WFP",
-    "WFPSFW",
-    "WPFD",
-    "WPP",
-    "WSSC",
-    "WWFP",
-    "WWP",
-    "WWS",
-];
+var LEGAL_ACTIONS = /^[FPSWDC ^]$/;
 
 var queue = null;
 
@@ -118,22 +159,22 @@ exports.create = function(spec,my) {
     }
     
     my.isValid = function (action) {
-        if ((typeof action.left != 'string') || !(action.left.match(/^[FPSWDCfpswdc ^]$/))) {
+        if ((typeof action.left != 'string') || !(action.left.match(LEGAL_ACTIONS))) {
             return false
         }
-        if ((typeof action.right != 'string') || !(action.right.match(/^[FPSWDCfpswdc ^]$/))) {
+        if ((typeof action.right != 'string') || !(action.right.match(LEGAL_ACTIONS))) {
             return false
         }
         if (action.spells) {
-            for (var i = 0; i < action.spells.length; i++) {
-                var spell = SPELL_LIST.indexOf(action.spells[i].name);
-                if (spell === -1) {
+            if (action.spells.left) {
+                var s = SPELLS[action.spells.left.name];
+                if (!s || (s.twoHanded() && action.spells.right) || !s.castable('left',action,my.actions)) {
                     return false;
                 }
-                if (action.spells[i].hand !== "left" && action.spells[i].hand !== "right") {
-                    return false;
-                }
-                if (!my.isCastable(SPELL_ACTIONS[spell], my.actions[action.spells[i].hand], action[action.spells[i].hand])) {
+            }
+            if (action.spells.right) {
+                var s = SPELLS[action.spells.right.name];
+                if (!s || (s.twoHanded() && action.spells.left) || !s.castable('right',action,my.actions)) {
                     return false;
                 }
             }
