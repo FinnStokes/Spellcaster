@@ -2,11 +2,12 @@ var app = require('express').createServer();
 var fs  = require('fs');
 var io = require('socket.io').listen(app);
 var player = require('./player.js');
+var spell = require("./spell.js");
 
 app.listen(42002);
 
 app.get('/:file.:ext', function (req, res){
-    console.log(req.url);
+    //console.log(req.url);
     var path = '/client/'
     fs.readFile(__dirname + path + req.params.file + '.' + req.params.ext,
                 function (err, data) {
@@ -30,5 +31,7 @@ io.sockets.on('connection', function (socket) {
     var p = player.create({
         'socket': socket,
     });
-    console.log("Connected");
+    socket.on('get spell list', function () {
+        socket.emit('spell list', spell.clientList);
+    });
 });

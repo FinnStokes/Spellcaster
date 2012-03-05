@@ -5,7 +5,7 @@ jQuery(document).ready(function () {
     var spells = spellList({
         'socket': socket,
     });
-    //resources.load(spells);
+    resources.load(spells);
 
     var actions = [];
     actions.push({
