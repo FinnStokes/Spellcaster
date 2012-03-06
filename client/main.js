@@ -31,14 +31,27 @@ jQuery(document).ready(function () {
         ],
     });
     
+    var next = {};
+    var playerActions = [];
+    var opponentActions = [];
+    
+    $('#message').append("Loading... ");
     resources.onLoad(function () {
-        console.log("Loaded");
+        $('#message').append("Done <br />");
+        $('#message').append("Connecting... ");
         socket.on('opponent connected', function () {
-            console.log("Connected");
-            socket.emit('ready', actions.shift());
+            $('#message').append("Done <br />");
+            $('#game').removeClass('hidden');
         });
-        socket.on('new turn', function () {
-            socket.emit('ready', actions.shift());
+        socket.on('new turn', function (otherNext) {
+            playerActions.push(next);
+            $('#playerLeft').append(next.left);
+            $('#playerRight').append(next.right);
+            opponentActions.push(otherNext);
+            $('#opponentLeft').append(otherNext.left);
+            $('#opponentRight').append(otherNext.right);
+            next = actions.shift();
+            socket.emit('ready', next);
         });
         socket.emit('find opponent');
     });

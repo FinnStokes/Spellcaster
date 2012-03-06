@@ -9,13 +9,37 @@
     <script src="resourceManager.js"></script>
     <script src="spellList.js"></script>
     <style>
-      body { background-color: black; padding: 0; margin: 0; }
-      #game { display: block; }
+      body { background-color: black; padding: 0; margin: 0; color: white; }
+      .hidden { display: none; }
     </style>
   </head>
   <body>
-    <div id="container">
-        <canvas id="game"></canvas>
-    </div>
+    <form id="game" class="hidden">
+      Left:<br />
+      <input type="radio" name="left" value="F" />F<br />
+      <input type="radio" name="left" value="P" />P<br />
+      <input type="radio" name="left" value="S" />S<br />
+      <input type="radio" name="left" value="W" />W<br />
+      <input type="radio" name="left" value="D" />D<br />
+      <input type="radio" name="left" value="C" />C<br />
+      <input type="radio" name="left" value="^" />stab<br />
+      <input type="radio" name="left" value=" " />none<br /><br />
+      Right:<br />
+      <input type="radio" name="right" value="F" />F<br />
+      <input type="radio" name="right" value="P" />P<br />
+      <input type="radio" name="right" value="S" />S<br />
+      <input type="radio" name="right" value="W" />W<br />
+      <input type="radio" name="right" value="D" />D<br />
+      <input type="radio" name="right" value="C" />C<br />
+      <input type="radio" name="right" value="^" />stab<br />
+      <input type="radio" name="right" value=" " />none<br /><br />
+      Player:<br />
+      Left: <div id="playerLeft"></div>
+      Right: <div id="playerRight"></div>
+      Opponent:<br />
+      Left: <div id="opponentLeft"></div>
+      Right: <div id="opponentRight"></div>
+    </form>
+    <div id="message"></div>
   </body>
 </html>
