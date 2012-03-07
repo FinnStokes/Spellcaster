@@ -6,30 +6,6 @@ jQuery(document).ready(function () {
         'socket': socket,
     });
     resources.load(spells);
-
-    var actions = [];
-    actions.push({
-        'left': "D",
-        'right': "F",
-    });
-    actions.push({
-        'left': "P",
-        'right': "F",
-    });
-    actions.push({
-        'left': "P",
-        'right': "F",
-        'spells': [
-            {
-                'name': "Amnesia",
-                'hand': "left",
-            },
-            {
-                'name': "Paralysis",
-                'hand': "right",
-            },
-        ],
-    });
     
     var next = {};
     var playerActions = [];
@@ -44,25 +20,29 @@ jQuery(document).ready(function () {
         socket.on('opponent connected', function () {
             $('#message').append("Done <br />");
             $('#game').removeClass('hidden');
+
+            var form = $('#actionForm');
+            var readyButton = form.children('input[name="ready"]');
             
             var toggleReady = function () {
                 ready = !ready;
-                $('#actionForm').children().each(function () {
+                form.children().each(function () {
                     $(this).attr('disabled', ready);
                 });
-                $('#readyButton').attr('disabled', false);
+                readyButton.attr('disabled', false);
                 if (ready) {
                     console.log("ready");
-                    $('#readyButton').attr('value', "Cancel");
-                    next = actions.shift();
+                    readyButton.attr('value', "Cancel");
+                    next.left = form.children('input[name="left"]:checked').val();
+                    next.right = form.children('input[name="right"]:checked').val();
                     socket.emit('ready', next);
                 } else { 
                     console.log("unready");
-                    $('#readyButton').attr('value', "Ready");
+                    readyButton.attr('value', "Ready");
                     socket.emit('unready');
                 }
             }
-            $('#readyButton').bind('click', toggleReady);
+            readyButton.bind('click', toggleReady);
             socket.on('new turn', function (otherNext) {
                 playerActions.push(next);
                 $('#playerLeft').append(next.left);
