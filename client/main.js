@@ -48,21 +48,21 @@ jQuery(document).ready(function () {
             var toggleReady = function () {
                 ready = !ready;
                 $('#actionForm').children().each(function () {
-                    $(this).disabled = ready;
+                    $(this).attr('disabled', ready);
                 });
-                $('#readyButton').disabled = false;
+                $('#readyButton').attr('disabled', false);
                 if (ready) {
                     console.log("ready");
-                    $('#readyButton').value = "Cancel";
+                    $('#readyButton').attr('value', "Cancel");
                     next = actions.shift();
                     socket.emit('ready', next);
                 } else { 
                     console.log("unready");
-                    $('#readyButton').value = "Ready";
+                    $('#readyButton').attr('value', "Ready");
                     socket.emit('unready');
                 }
             }
-            $('readyButton').onpress = toggleReady;
+            $('#readyButton').bind('click', toggleReady);
             socket.on('new turn', function (otherNext) {
                 playerActions.push(next);
                 $('#playerLeft').append(next.left);
