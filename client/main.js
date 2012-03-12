@@ -8,8 +8,26 @@ jQuery(document).ready(function () {
     resources.load(spells);
     
     var next = {};
-    var playerActions = [];
-    var opponentActions = [];
+    var player = {
+        'actions': {
+            'left': [],
+            'right': [],
+        },
+        'castable': {
+            'left': [],
+            'right': [],
+        },
+    };
+    var opponent = {
+        'actions': {
+            'left': [],
+            'right': [],
+        },
+        'castable': {
+            'left': [],
+            'right': [],
+        },
+    };
     
     var ready = false;
     
@@ -44,12 +62,17 @@ jQuery(document).ready(function () {
             }
             readyButton.bind('click', toggleReady);
             socket.on('new turn', function (otherNext) {
-                playerActions.push(next);
+                player.actions.left.push(next.left);
+                player.actions.right.push(next.right);
                 $('#playerLeft').append(next.left);
                 $('#playerRight').append(next.right);
-                opponentActions.push(otherNext);
+                opponent.actions.left.push(otherNext.left);
+                opponent.actions.right.push(otherNext.right);
                 $('#opponentLeft').append(otherNext.left);
                 $('#opponentRight').append(otherNext.right);
+                player.spells = spells.castable(player);
+                opponent.spells = spells.castable(opponent);
+                console.log(player.spells);
                 if (ready) {
                     toggleReady();
                 }
